@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hellofromcore
+  labels:
+    app: hellofromcore
+spec:
+  type: NodePort
+  ports:
+    - port: 3001
+      protocol: TCP
+      nodePort: 31119
+  selector:
+    app: hellofromcore
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hellofromcore
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: hellofromcore
+  template:
+    metadata:
+      labels:
+        app: hellofromcore
+    spec:
+      containers:
+      - name: hellofromcore
+        image: asalilje/hellofromcore:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3001
+          protocol: TCP
